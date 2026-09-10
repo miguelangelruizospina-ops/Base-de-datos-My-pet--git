@@ -21,12 +21,15 @@ public class UsuarioController {
         return usuarioService.registrarUsuario(usuario);
     }
 
+<<<<<<< HEAD
     // Iniciar sesión
     @PostMapping("/login")
     public Usuario login(@RequestBody Usuario usuario) {
         return usuarioService.login(usuario.getCorreo(), usuario.getContrasena());
     }
 
+=======
+>>>>>>> origin/master
     // Listar todos los usuarios
     @GetMapping("/listar")
     public List<Usuario> listar() {

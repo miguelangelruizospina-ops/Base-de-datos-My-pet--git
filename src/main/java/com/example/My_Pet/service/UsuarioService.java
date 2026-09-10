@@ -18,6 +18,10 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/master
     // POST: registrar un nuevo usuario
     public Usuario registrarUsuario(Usuario usuario) {
 
@@ -28,6 +32,10 @@ public class UsuarioService {
         return usuarioRepository.save(usuario);
     }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/master
     // GET: obtener todos los usuarios registrados
     public List<Usuario> obtenerTodosLosUsuarios() {
 
@@ -35,6 +43,10 @@ public class UsuarioService {
         return usuarioRepository.findAll();
     }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/master
     // GET: obtener un usuario por su ID
     public Usuario obtenerUsuarioPorId(int id) {
 
@@ -50,12 +62,17 @@ public class UsuarioService {
         throw new RuntimeException("Usuario no encontrado con ID: " + id);
     }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/master
     // PUT: actualizar únicamente el correo y la contraseña
     public Usuario actualizarUsuario(int id, Usuario datosUsuario) {
 
         // Busco primero el usuario que ya existe
         Usuario usuarioExistente = obtenerUsuarioPorId(id);
 
+<<<<<<< HEAD
         // Actualizo los datos permitidos
         usuarioExistente.setCorreo(datosUsuario.getCorreo());
         usuarioExistente.setContrasena(datosUsuario.getContrasena());
@@ -64,12 +81,24 @@ public class UsuarioService {
         return usuarioRepository.save(usuarioExistente);
     }
 
+=======
+        // Actualizo solamente los datos que permitimos modificar
+        usuarioExistente.setCorreo(datosUsuario.getCorreo());
+        usuarioExistente.setContrasena(datosUsuario.getContrasena());
+
+        // Guardo los cambios sin modificar los demás datos
+        return usuarioRepository.save(usuarioExistente);
+    }
+
+
+>>>>>>> origin/master
     // DELETE: eliminar un usuario por su ID
     public void eliminarUsuario(int id) {
 
         // Busco primero el usuario para comprobar que existe
         Usuario usuarioExistente = obtenerUsuarioPorId(id);
 
+<<<<<<< HEAD
         // Elimino el usuario
         usuarioRepository.delete(usuarioExistente);
     }
@@ -91,4 +120,11 @@ public class UsuarioService {
         // Si los datos no coinciden, muestro un mensaje de error
         throw new RuntimeException("Correo o contraseña incorrectos");
     }
+=======
+        // Elimino el usuario.
+        // MySQL se encarga de eliminar automáticamente las mascotas
+        // relacionadas gracias a ON DELETE CASCADE.
+        usuarioRepository.delete(usuarioExistente);
+    }
+>>>>>>> origin/master
 }
