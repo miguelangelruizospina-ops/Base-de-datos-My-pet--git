@@ -7,31 +7,49 @@ import java.time.LocalDateTime;
 @Table(name = "recordatorio")
 public class Recordatorio {
 
+    // ID del recordatorio
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_recordatorio")
     private Integer idRecordatorio;
 
+    // Mensaje del recordatorio
     @Column(length = 300, nullable = false)
     private String mensaje;
 
-    // Registra la fecha y hora automáticamente
-    @Column(insertable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    // Fecha y hora de creación
+    @Column(
+        insertable = false,
+        updatable = false,
+        columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
+    )
     private LocalDateTime fecha;
 
+    // Estado del recordatorio
     @Column(length = 100)
     private String estado;
 
-    // Relación Muchos a Uno con Usuario
+    // Usuario relacionado con el recordatorio
     @ManyToOne
-    @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario", nullable = false)
+    @JoinColumn(
+        name = "id_usuario",
+        referencedColumnName = "id_usuario",
+        nullable = false
+    )
     private Usuario usuario;
 
-    // --- CONSTRUCTORES ---
+    // Constructor vacío
     public Recordatorio() {
     }
 
-    public Recordatorio(Integer idRecordatorio, String mensaje, LocalDateTime fecha, String estado, Usuario usuario) {
+    // Constructor completo
+    public Recordatorio(
+            Integer idRecordatorio,
+            String mensaje,
+            LocalDateTime fecha,
+            String estado,
+            Usuario usuario) {
+
         this.idRecordatorio = idRecordatorio;
         this.mensaje = mensaje;
         this.fecha = fecha;
@@ -39,19 +57,45 @@ public class Recordatorio {
         this.usuario = usuario;
     }
 
-    // --- GETTERS Y SETTERS ---
-    public Integer getIdRecordatorio() { return idRecordatorio; }
-    public void setIdRecordatorio(Integer idRecordatorio) { this.idRecordatorio = idRecordatorio; }
+    // Getters y setters
 
-    public String getMensaje() { return mensaje; }
-    public void setMensaje(String mensaje) { this.mensaje = mensaje; }
+    public Integer getIdRecordatorio() {
+        return idRecordatorio;
+    }
 
-    public LocalDateTime getFecha() { return fecha; }
-    public void setFecha(LocalDateTime fecha) { this.fecha = fecha; }
+    public void setIdRecordatorio(Integer idRecordatorio) {
+        this.idRecordatorio = idRecordatorio;
+    }
 
-    public String getEstado() { return estado; }
-    public void setEstado(String estado) { this.estado = estado; }
+    public String getMensaje() {
+        return mensaje;
+    }
 
-    public Usuario getUsuario() { return usuario; }
-    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
+    public void setMensaje(String mensaje) {
+        this.mensaje = mensaje;
+    }
+
+    public LocalDateTime getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(LocalDateTime fecha) {
+        this.fecha = fecha;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
 }

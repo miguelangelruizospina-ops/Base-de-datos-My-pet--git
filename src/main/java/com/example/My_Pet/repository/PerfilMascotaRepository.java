@@ -8,6 +8,7 @@ import java.util.Optional;
 
 @Repository
 public interface PerfilMascotaRepository extends JpaRepository<PerfilMascota, Integer> {
-    // Busca el perfil usando el id_mascota (Integer) de la relación
+
+    // Permite buscar el perfil usando el ID de la mascota
     Optional<PerfilMascota> findByMascotaIdMascota(Integer idMascota);
 }

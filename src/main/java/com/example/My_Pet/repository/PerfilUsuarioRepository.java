@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PerfilUsuarioRepository extends JpaRepository<PerfilUsuario, Integer> {
-    // Aquí ya tenemos listos los métodos para guardar, listar y borrar perfiles
+
 }

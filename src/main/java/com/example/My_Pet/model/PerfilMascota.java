@@ -23,16 +23,29 @@ public class PerfilMascota {
     @Column(name = "cuidados_especiales", length = 300)
     private String cuidadosEspeciales;
 
-    // Conexión Uno a Uno con tu modelo Mascota existente
+    // Cada perfil pertenece a una sola mascota
     @OneToOne
-    @JoinColumn(name = "id_mascota", referencedColumnName = "id_mascota", nullable = false)
+    @JoinColumn(
+            name = "id_mascota",
+            referencedColumnName = "id_mascota",
+            nullable = false,
+            unique = true
+    )
     private Mascota mascota;
 
-    // --- CONSTRUCTORES ---
+    // Constructor vacío
     public PerfilMascota() {
     }
 
-    public PerfilMascota(Integer idPerfilMascota, String caracteristicas, String comportamiento, String gustos, String cuidadosEspeciales, Mascota mascota) {
+    // Constructor completo
+    public PerfilMascota(
+            Integer idPerfilMascota,
+            String caracteristicas,
+            String comportamiento,
+            String gustos,
+            String cuidadosEspeciales,
+            Mascota mascota) {
+
         this.idPerfilMascota = idPerfilMascota;
         this.caracteristicas = caracteristicas;
         this.comportamiento = comportamiento;
@@ -41,22 +54,53 @@ public class PerfilMascota {
         this.mascota = mascota;
     }
 
-    // --- GETTERS Y SETTERS ---
-    public Integer getIdPerfilMascota() { return idPerfilMascota; }
-    public void setIdPerfilMascota(Integer idPerfilMascota) { this.idPerfilMascota = idPerfilMascota; }
+    // GETTERS Y SETTERS
 
-    public String getCaracteristicas() { return caracteristicas; }
-    public void setCaracteristicas(String caracteristicas) { this.caracteristicas = caracteristicas; }
+    public Integer getIdPerfilMascota() {
+        return idPerfilMascota;
+    }
 
-    public String getComportamiento() { return comportamiento; }
-    public void setComportamiento(String comportamiento) { this.comportamiento = comportamiento; }
+    public void setIdPerfilMascota(Integer idPerfilMascota) {
+        this.idPerfilMascota = idPerfilMascota;
+    }
 
-    public String getGustos() { return gustos; }
-    public void setGustos(String gustos) { this.gustos = gustos; }
+    public String getCaracteristicas() {
+        return caracteristicas;
+    }
 
-    public String getCuidadosEspeciales() { return cuidadosEspeciales; }
-    public void setCuidadosEspeciales(String cuidadosEspeciales) { this.cuidadosEspeciales = cuidadosEspeciales; }
+    public void setCaracteristicas(String caracteristicas) {
+        this.caracteristicas = caracteristicas;
+    }
 
-    public Mascota getMascota() { return mascota; }
-    public void setMascota(Mascota mascota) { this.mascota = mascota; }
+    public String getComportamiento() {
+        return comportamiento;
+    }
+
+    public void setComportamiento(String comportamiento) {
+        this.comportamiento = comportamiento;
+    }
+
+    public String getGustos() {
+        return gustos;
+    }
+
+    public void setGustos(String gustos) {
+        this.gustos = gustos;
+    }
+
+    public String getCuidadosEspeciales() {
+        return cuidadosEspeciales;
+    }
+
+    public void setCuidadosEspeciales(String cuidadosEspeciales) {
+        this.cuidadosEspeciales = cuidadosEspeciales;
+    }
+
+    public Mascota getMascota() {
+        return mascota;
+    }
+
+    public void setMascota(Mascota mascota) {
+        this.mascota = mascota;
+    }
 }

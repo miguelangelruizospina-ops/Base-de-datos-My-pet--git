@@ -9,50 +9,177 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-// @Service le dice al contenedor de Spring que aquí reside la lógica transaccional y operativa
 @Service
 public class ServicioService {
 
-    // @Autowired inyecta automáticamente los repositorios para poder usarlos en las funciones
     @Autowired
     private ServicioRepository servicioRepository;
 
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    // Obtiene la lista completa de todos los servicios registrados en la plataforma
+
+    // GET - Obtener todos los servicios
     public List<Servicio> obtenerTodos() {
+
         return servicioRepository.findAll();
     }
 
-    // Obtiene una lista filtrada de servicios según la categoría enviada (ej: "Veterinaria")
+
+    // GET - Obtener servicios por tipo
     public List<Servicio> obtenerPorTipo(String tipo) {
+
         return servicioRepository.findByTipo(tipo);
     }
 
-    // Registra un nuevo servicio o actualiza uno existente bajo reglas estrictas
+
+    // GET - Obtener un servicio por ID
+    public Servicio obtenerPorId(Integer id) {
+
+        return servicioRepository.findById(id)
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "El servicio con ID " + id +
+                                " no existe."
+                        )
+                );
+    }
+
+
+    // POST - Crear un servicio
     public Servicio guardar(Servicio servicio) {
-        
-        // CORRECCIÓN DE PRIMITIVO: Evaluamos si el usuario es nulo o si su ID de tipo int es inválido (<= 0)
-        if (servicio.getUsuario() == null || servicio.getUsuario().getIdUsuario() <= 0) {
-            throw new IllegalArgumentException("El servicio debe estar asociado a un usuario administrador o proveedor válido.");
+
+        // Verificar que tenga un usuario
+        if (servicio.getUsuario() == null ||
+            servicio.getUsuario().getIdUsuario() <= 0) {
+
+            throw new IllegalArgumentException(
+                    "El servicio debe estar asociado a un usuario válido."
+            );
         }
 
-        Integer idUsuario = servicio.getUsuario().getIdUsuario();
-        
-        // Consulta en la base de datos si el ID de usuario suministrado realmente existe
-        Usuario usuarioExistente = usuarioRepository.findById(idUsuario)
-                .orElseThrow(() -> new IllegalArgumentException("El usuario con ID " + idUsuario + " no existe."));
 
-        // Al verificar que el usuario sí existe, se vincula formalmente al servicio antes de persistirlo
+        // Obtener el ID del usuario
+        Integer idUsuario =
+                servicio.getUsuario().getIdUsuario();
+
+
+        // Verificar que el usuario exista
+        Usuario usuarioExistente =
+                usuarioRepository.findById(idUsuario)
+                        .orElseThrow(() ->
+                                new IllegalArgumentException(
+                                        "El usuario con ID " +
+                                        idUsuario +
+                                        " no existe."
+                                )
+                        );
+
+
+        // Asociar el usuario existente
         servicio.setUsuario(usuarioExistente);
-        
-        // Guarda el registro en la base de datos y retorna el objeto con su ID auto-generado
+
+
+        // Guardar el servicio
         return servicioRepository.save(servicio);
     }
 
-    // Remueve un servicio del sistema utilizando su ID principal
+
+    // PUT - Actualizar un servicio
+    public Servicio actualizar(
+            Integer id,
+            Servicio servicio) {
+
+        // Buscar el servicio
+        Servicio servicioExistente =
+                servicioRepository.findById(id)
+                        .orElseThrow(() ->
+                                new IllegalArgumentException(
+                                        "El servicio con ID " +
+                                        id +
+                                        " no existe."
+                                )
+                        );
+
+
+        // Actualizar nombre
+        servicioExistente.setNombre(
+                servicio.getNombre()
+        );
+
+
+        // Actualizar tipo
+        servicioExistente.setTipo(
+                servicio.getTipo()
+        );
+
+
+        // Actualizar ubicación
+        servicioExistente.setUbicacion(
+                servicio.getUbicacion()
+        );
+
+
+        // Actualizar descripción
+        servicioExistente.setDescripcion(
+                servicio.getDescripcion()
+        );
+
+
+        // Actualizar calificación
+        servicioExistente.setCalificacion(
+                servicio.getCalificacion()
+        );
+
+
+        // Actualizar usuario si se envía
+        if (servicio.getUsuario() != null) {
+
+            Integer idUsuario =
+                    servicio.getUsuario().getIdUsuario();
+
+
+            // Verificar que el usuario exista
+            Usuario usuarioExistente =
+                    usuarioRepository.findById(idUsuario)
+                            .orElseThrow(() ->
+                                    new IllegalArgumentException(
+                                            "El usuario con ID " +
+                                            idUsuario +
+                                            " no existe."
+                                    )
+                            );
+
+
+            // Asociar el usuario existente
+            servicioExistente.setUsuario(
+                    usuarioExistente
+            );
+        }
+
+
+        // Guardar los cambios
+        return servicioRepository.save(
+                servicioExistente
+        );
+    }
+
+
+    // DELETE - Eliminar un servicio
     public void eliminar(Integer id) {
+
+        // Verificar que el servicio exista
+        if (!servicioRepository.existsById(id)) {
+
+            throw new IllegalArgumentException(
+                    "El servicio con ID " +
+                    id +
+                    " no existe."
+            );
+        }
+
+
+        // Eliminar el servicio
         servicioRepository.deleteById(id);
     }
 }

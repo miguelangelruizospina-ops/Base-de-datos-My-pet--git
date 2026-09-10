@@ -11,27 +11,44 @@ public class Documento {
     @Column(name = "id_documento")
     private Integer idDocumento;
 
-    @Column(name = "tipo_documento", length = 200, nullable = false)
+    @Column(name = "tipo_documento", length = 50, nullable = false)
     private String tipoDocumento;
 
     @Column(length = 300, nullable = false)
-    private String archivo; // Aquí se guardará la ruta o nombre del archivo (ej: "vacunas.pdf")
+    private String archivo;
 
-    // Relación obligatoria con Usuario
+    // Un documento pertenece obligatoriamente a un usuario
     @ManyToOne
-    @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario", nullable = false)
+    @JoinColumn(
+            name = "id_usuario",
+            referencedColumnName = "id_usuario",
+            nullable = false
+    )
     private Usuario usuario;
 
-    // Relación opcional con Mascota
+    // Un documento puede estar relacionado con una mascota
     @ManyToOne
-    @JoinColumn(name = "id_mascota", referencedColumnName = "id_mascota", nullable = true)
+    @JoinColumn(
+            name = "id_mascota",
+            referencedColumnName = "id_mascota",
+            nullable = true
+    )
     private Mascota mascota;
 
-    // --- CONSTRUCTORES ---
+
+    // Constructor vacío
     public Documento() {
     }
 
-    public Documento(Integer idDocumento, String tipoDocumento, String archivo, Usuario usuario, Mascota mascota) {
+
+    // Constructor completo
+    public Documento(
+            Integer idDocumento,
+            String tipoDocumento,
+            String archivo,
+            Usuario usuario,
+            Mascota mascota) {
+
         this.idDocumento = idDocumento;
         this.tipoDocumento = tipoDocumento;
         this.archivo = archivo;
@@ -39,19 +56,46 @@ public class Documento {
         this.mascota = mascota;
     }
 
-    // --- GETTERS Y SETTERS ---
-    public Integer getIdDocumento() { return idDocumento; }
-    public void setIdDocumento(Integer idDocumento) { this.idDocumento = idDocumento; }
 
-    public String getTipoDocumento() { return tipoDocumento; }
-    public void setTipoDocumento(String tipoDocumento) { this.tipoDocumento = tipoDocumento; }
+    // GETTERS Y SETTERS
 
-    public String getArchivo() { return archivo; }
-    public void setArchivo(String archivo) { this.archivo = archivo; }
+    public Integer getIdDocumento() {
+        return idDocumento;
+    }
 
-    public Usuario getUsuario() { return usuario; }
-    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
+    public void setIdDocumento(Integer idDocumento) {
+        this.idDocumento = idDocumento;
+    }
 
-    public Mascota getMascota() { return mascota; }
-    public void setMascota(Mascota mascota) { this.mascota = mascota; }
+    public String getTipoDocumento() {
+        return tipoDocumento;
+    }
+
+    public void setTipoDocumento(String tipoDocumento) {
+        this.tipoDocumento = tipoDocumento;
+    }
+
+    public String getArchivo() {
+        return archivo;
+    }
+
+    public void setArchivo(String archivo) {
+        this.archivo = archivo;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public Mascota getMascota() {
+        return mascota;
+    }
+
+    public void setMascota(Mascota mascota) {
+        this.mascota = mascota;
+    }
 }
