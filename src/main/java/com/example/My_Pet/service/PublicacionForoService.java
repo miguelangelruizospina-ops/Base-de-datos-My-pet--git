@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 
-// @Service le dice al contenedor de Spring que aquí reside la lógica transaccional y operativa
 @Service
 public class PublicacionForoService {
 
@@ -20,44 +19,107 @@ public class PublicacionForoService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    // Obtiene la lista completa de todas las publicaciones del foro
+    // Obtener todas las publicaciones
     public List<PublicacionForo> obtenerTodas() {
         return forumRepository.findAll();
     }
 
-    // Obtiene todas las publicaciones de un único autor
+    // Obtener publicaciones de un usuario
     public List<PublicacionForo> obtenerPorUsuario(Integer idUsuario) {
         return forumRepository.findByUsuarioIdUsuario(idUsuario);
     }
 
-    // Registra una nueva publicación controlando la asignación del tiempo y validación del usuario
+    // Crear una publicación
     public PublicacionForo guardar(PublicacionForo publicacion) {
-        
-        // CORRECCIÓN DE PRIMITIVO: Evaluamos si el usuario es nulo o si su ID de tipo int es inválido (<= 0)
-        if (publicacion.getUsuario() == null || publicacion.getUsuario().getIdUsuario() <= 0) {
-            throw new IllegalArgumentException("La publicación debe estar asociada a un usuario válido.");
+
+        if (publicacion.getUsuario() == null ||
+            publicacion.getUsuario().getIdUsuario() <= 0) {
+
+            throw new IllegalArgumentException(
+                "La publicación debe estar asociada a un usuario válido."
+            );
         }
 
-        Integer idUsuario = publicacion.getUsuario().getIdUsuario();
-        
-        // Consulta en la base de datos si el usuario que intenta publicar realmente existe
-        Usuario usuarioExistente = usuarioRepository.findById(idUsuario)
-                .orElseThrow(() -> new IllegalArgumentException("El usuario con ID " + idUsuario + " no existe."));
+        Integer idUsuario =
+                publicacion.getUsuario().getIdUsuario();
 
-        // Vincula el usuario verificado a la publicación
+        Usuario usuarioExistente =
+                usuarioRepository.findById(idUsuario)
+                .orElseThrow(() ->
+                    new IllegalArgumentException(
+                        "El usuario con ID " + idUsuario +
+                        " no existe."
+                    )
+                );
+
         publicacion.setUsuario(usuarioExistente);
 
-        // Si es una publicación nueva (id es nulo), le asignamos la fecha y hora actual antes de guardar
+        // Coloca la fecha automáticamente al crear
         if (publicacion.getIdPublicacion() == null) {
             publicacion.setFecha(LocalDateTime.now());
         }
 
-        // Almacena el registro en MySQL y lo devuelve con su clave autogenerada
         return forumRepository.save(publicacion);
     }
 
-    // Remueve una publicación utilizando su ID principal
+    // Actualizar una publicación
+    public PublicacionForo actualizar(
+            Integer id,
+            PublicacionForo publicacion) {
+
+        PublicacionForo publicacionExistente =
+                forumRepository.findById(id)
+                .orElseThrow(() ->
+                    new IllegalArgumentException(
+                        "La publicación con ID " + id +
+                        " no existe."
+                    )
+                );
+
+        // Actualizar título
+        publicacionExistente.setTitulo(
+                publicacion.getTitulo()
+        );
+
+        // Actualizar contenido
+        publicacionExistente.setContenido(
+                publicacion.getContenido()
+        );
+
+        // Actualizar usuario si se envía
+        if (publicacion.getUsuario() != null) {
+
+            Integer idUsuario =
+                    publicacion.getUsuario().getIdUsuario();
+
+            Usuario usuarioExistente =
+                    usuarioRepository.findById(idUsuario)
+                    .orElseThrow(() ->
+                        new IllegalArgumentException(
+                            "El usuario con ID " + idUsuario +
+                            " no existe."
+                        )
+                    );
+
+            publicacionExistente.setUsuario(
+                    usuarioExistente
+            );
+        }
+
+        return forumRepository.save(publicacionExistente);
+    }
+
+    // Eliminar una publicación
     public void eliminar(Integer id) {
+
+        if (!forumRepository.existsById(id)) {
+
+            throw new IllegalArgumentException(
+                "La publicación con ID " + id +
+                " no existe."
+            );
+        }
+
         forumRepository.deleteById(id);
     }
 }

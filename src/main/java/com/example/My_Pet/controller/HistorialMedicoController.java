@@ -1,7 +1,5 @@
-// Definición del paquete: organiza el proyecto y ubica esta clase en la capa de controladores (Endpoints de Historial Médico)
 package com.example.My_Pet.controller;
 
-// Importaciones de la entidad del modelo, el componente de servicio y las clases de manejo de respuestas web de Spring
 import com.example.My_Pet.model.HistorialMedico;
 import com.example.My_Pet.service.HistorialMedicoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,44 +8,114 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-// @RestController: Define que esta clase es un controlador API REST, lo que permite retornar las respuestas directamente en formato JSON
 @RestController
-// @RequestMapping: Establece el prefijo o ruta base de la URL para acceder a todos los endpoints de este controlador
 @RequestMapping("/api/historiales-medicos")
+@CrossOrigin(origins = "*")
 public class HistorialMedicoController {
 
-    // @Autowired: Inyección de dependencias para conectar y usar los métodos de la capa de lógica de negocio (Servicio)
+    // Conectamos el Controller con el Service
     @Autowired
     private HistorialMedicoService historialMedicoService;
 
-    // @GetMapping: Mapea solicitudes de lectura HTTP GET. Ruta de consulta global: http://localhost:8082/api/historiales-medicos/listar
+
+    // GET - LISTAR TODOS LOS HISTORIALES
     @GetMapping("/listar")
     public List<HistorialMedico> listarTodo() {
-        // Invoca al servicio para recuperar la lista completa de todos los historiales médicos registrados en el sistema
+
+        // Obtenemos todos los historiales
         return historialMedicoService.obtenerTodos();
     }
 
-    // @GetMapping con variable de ruta: Permite capturar dinámicamente el ID de una mascota desde la URL para filtrar su registro clínico
-    // URL de consulta en entorno local: http://localhost:8082/api/historiales-medicos/mascota/{idMascota}
+
+    // GET - BUSCAR HISTORIALES POR MASCOTA
     @GetMapping("/mascota/{idMascota}")
-    public ResponseEntity<List<HistorialMedico>> listarPorMascota(@PathVariable Integer idMascota) {
-        // Delega la consulta al método especializado del servicio enviando el ID recibido
-        List<HistorialMedico> historial = historialMedicoService.obtenerPorMascota(idMascota);
-        // Retorna un estado HTTP 200 (OK) transfiriendo la colección de datos encontrada en formato JSON
+    public ResponseEntity<List<HistorialMedico>> listarPorMascota(
+            @PathVariable Integer idMascota) {
+
+        // Buscamos los historiales de la mascota
+        List<HistorialMedico> historial =
+                historialMedicoService.obtenerPorMascota(idMascota);
+
         return ResponseEntity.ok(historial);
     }
 
-    // @PostMapping: Recibe un objeto serializado en el cuerpo de la solicitud (JSON) para registrar un nuevo antecedente clínico
+
+    // POST - CREAR HISTORIAL MÉDICO
     @PostMapping("/guardar")
-    public ResponseEntity<?> crearHistorial(@RequestBody HistorialMedico historial) {
+    public ResponseEntity<?> crearHistorial(
+            @RequestBody HistorialMedico historial) {
+
         try {
-            // Envía la entidad a la capa de servicio para procesar las validaciones de negocio y ejecutar la persistencia en MySQL
-            HistorialMedico nuevoHistorial = historialMedicoService.guardar(historial);
-            // Si el proceso es exitoso, responde un código HTTP 200 (OK) junto con el objeto persistido y su ID autogenerado
+
+            // Guardamos el nuevo historial
+            HistorialMedico nuevoHistorial =
+                    historialMedicoService.guardar(historial);
+
             return ResponseEntity.ok(nuevoHistorial);
+
         } catch (IllegalArgumentException e) {
-            // Manejo de excepciones: Atrapa los fallos lógicos del Service y devuelve un HTTP 400 (Bad Request) con el motivo exacto del error
-            return ResponseEntity.badRequest().body(e.getMessage());
+
+            return ResponseEntity
+                    .badRequest()
+                    .body(e.getMessage());
+        }
+    }
+
+
+    // PUT - ACTUALIZAR HISTORIAL MÉDICO
+    @PutMapping("/actualizar/{id}")
+    public ResponseEntity<?> actualizarHistorial(
+            @PathVariable Integer id,
+            @RequestBody HistorialMedico datos) {
+
+        try {
+
+            // Actualizamos el historial
+            HistorialMedico historialActualizado =
+                    historialMedicoService.actualizar(id, datos);
+
+            return ResponseEntity.ok(historialActualizado);
+
+        } catch (IllegalArgumentException e) {
+
+            return ResponseEntity
+                    .badRequest()
+                    .body(e.getMessage());
+
+        } catch (RuntimeException e) {
+
+            return ResponseEntity
+                    .notFound()
+                    .build();
+        }
+    }
+
+
+    // DELETE - ELIMINAR HISTORIAL MÉDICO
+    @DeleteMapping("/eliminar/{id}")
+    public ResponseEntity<?> eliminarHistorial(
+            @PathVariable Integer id) {
+
+        try {
+
+            // Eliminamos el historial
+            historialMedicoService.eliminar(id);
+
+            return ResponseEntity.ok(
+                    "Historial médico eliminado correctamente"
+            );
+
+        } catch (IllegalArgumentException e) {
+
+            return ResponseEntity
+                    .badRequest()
+                    .body(e.getMessage());
+
+        } catch (RuntimeException e) {
+
+            return ResponseEntity
+                    .notFound()
+                    .build();
         }
     }
 }

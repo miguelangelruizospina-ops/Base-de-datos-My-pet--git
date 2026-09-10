@@ -27,16 +27,20 @@ public class Mascota {
     @Column(length = 300)
     private String foto;
 
-    // Relación con el dueño (Usuario)
+    // Relación entre la mascota y su dueño
     @ManyToOne
     @JoinColumn(name = "id_usuario", nullable = false)
     private Usuario usuario;
 
-    // --- CONSTRUCTORES ---
+    // Constructor vacío
     public Mascota() {
     }
 
-    public Mascota(Integer idMascota, String nombre, String especie, String raza, LocalDate fechaNacimiento, String foto, Usuario usuario) {
+    // Constructor completo
+    public Mascota(Integer idMascota, String nombre, String especie,
+                   String raza, LocalDate fechaNacimiento,
+                   String foto, Usuario usuario) {
+
         this.idMascota = idMascota;
         this.nombre = nombre;
         this.especie = especie;
@@ -46,7 +50,8 @@ public class Mascota {
         this.usuario = usuario;
     }
 
-    // --- GETTERS Y SETTERS ---
+    // GETTERS Y SETTERS
+
     public Integer getIdMascota() {
         return idMascota;
     }

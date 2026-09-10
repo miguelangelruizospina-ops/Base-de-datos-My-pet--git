@@ -1,6 +1,13 @@
 package com.example.My_Pet.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.MapsId;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+
 import java.time.LocalDate;
 
 @Entity
@@ -32,28 +39,14 @@ public class PerfilUsuario {
     @Column(name = "fecha_nacimiento", nullable = false)
     private LocalDate fechaNacimiento;
 
-    // Conexión Uno a Uno con la tabla Usuario y el ON DELETE CASCADE
     @OneToOne
     @MapsId
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
 
-    // --- CONSTRUCTORES ---
     public PerfilUsuario() {
     }
 
-    public PerfilUsuario(Integer idUsuario, String nombreUsuario, String fotoPerfil, String biografia, String telefono, String ciudad, String genero, LocalDate fechaNacimiento) {
-        this.idUsuario = idUsuario;
-        this.nombreUsuario = nombreUsuario;
-        this.fotoPerfil = fotoPerfil;
-        this.biografia = biografia;
-        this.telefono = telefono;
-        this.ciudad = ciudad;
-        this.genero = genero;
-        this.fechaNacimiento = fechaNacimiento;
-    }
-
-    // --- GETTERS Y SETTERS ---
     public Integer getIdUsuario() {
         return idUsuario;
     }

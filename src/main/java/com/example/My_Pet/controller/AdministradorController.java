@@ -1,57 +1,138 @@
-// Definición del paquete: organiza el proyecto y ubica esta clase en la capa de controladores
 package com.example.My_Pet.controller;
 
-// Importaciones de las clases necesarias para el modelo, la lógica de negocio y las herramientas de Spring Boot
 import com.example.My_Pet.model.Administrador;
 import com.example.My_Pet.service.AdministradorService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-// @RestController: Indica que esta clase es un controlador API REST que maneja respuestas en formato JSON
 @RestController
-// @RequestMapping: Define la ruta base HTTP para acceder a todos los endpoints de este módulo
 @RequestMapping("/api/administradores")
+@CrossOrigin(origins = "*")
 public class AdministradorController {
 
-    // @Autowired: Inyección de dependencias para conectar y usar los métodos de la capa de servicio
+    // Conectamos el Controller con el Service
     @Autowired
     private AdministradorService administradorService;
 
-    // @GetMapping: Mapea peticiones de lectura. Ruta completa: http://localhost:8082/api/administradores/listar
+
+    // GET - LISTAR TODOS LOS ADMINISTRADORES
     @GetMapping("/listar")
-    public List<Administrador> listarTodo() {
-        // Llama al servicio para obtener la lista completa desde la base de datos y la retorna
-        return administradorService.obtenerTodos(); 
+    public List<Administrador> listarAdministradores() {
+
+        return administradorService.obtenerTodos();
     }
 
-    // @GetMapping con parámetro dinámico en la URL para buscar un administrador por su ID de usuario
-    @GetMapping("/usuario/{idUsuario}")
-    public ResponseEntity<Administrador> obtenerPorUsuario(@PathVariable Integer idUsuario) {
-        // Se ejecuta la búsqueda llamando a la lógica del servicio
-        Administrador admin = administradorService.obtenerPorUsuario(idUsuario);
-        
-        // Validación de existencia: Si el objeto viene vacío, respondemos un código HTTP 404 (Not Found)
-        if (admin == null) {
+
+    // GET - BUSCAR ADMINISTRADOR POR ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Administrador> obtenerPorId(
+            @PathVariable Integer id) {
+
+        try {
+
+            return ResponseEntity.ok(
+                    administradorService.obtenerPorId(id)
+            );
+
+        } catch (RuntimeException e) {
+
             return ResponseEntity.notFound().build();
         }
-        // Si el registro existe, responde un código HTTP 200 (OK) enviando los datos correspondientes
-        return ResponseEntity.ok(admin);
     }
 
-    // @PostMapping: Se utiliza para recibir datos nuevos (JSON) en el cuerpo de la petición y crear un registro
-    @PostMapping("/guardar")
-    public ResponseEntity<?> crearAdministrador(@RequestBody Administrador administrador) {
+
+    // GET - BUSCAR ADMINISTRADOR POR USUARIO
+    @GetMapping("/usuario/{idUsuario}")
+    public ResponseEntity<Administrador> obtenerPorUsuario(
+            @PathVariable Integer idUsuario) {
+
         try {
-            // Envía los datos mapeados al servicio para su procesamiento y persistencia
-            Administrador nuevoAdmin = administradorService.guardar(administrador);
-            // Si el proceso es exitoso, responde un HTTP 200 (OK) con el objeto guardado
-            return ResponseEntity.ok(nuevoAdmin); 
+
+            return ResponseEntity.ok(
+                    administradorService.obtenerPorUsuario(idUsuario)
+            );
+
+        } catch (RuntimeException e) {
+
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+
+    // POST - CREAR ADMINISTRADOR
+    @PostMapping("/crear")
+    public ResponseEntity<?> crearAdministrador(
+            @RequestBody Administrador administrador) {
+
+        try {
+
+            Administrador nuevoAdministrador =
+                    administradorService.guardar(administrador);
+
+            return ResponseEntity.ok(nuevoAdministrador);
+
         } catch (IllegalArgumentException e) {
-            // Control de excepciones: Si fallan las validaciones del negocio, captura el error y responde un HTTP 400 (Bad Request) con el mensaje explicativo
-            return ResponseEntity.badRequest().body(e.getMessage());
+
+            return ResponseEntity
+                    .badRequest()
+                    .body(e.getMessage());
+        }
+    }
+
+
+    // PUT - ACTUALIZAR ADMINISTRADOR
+    @PutMapping("/actualizar/{id}")
+    public ResponseEntity<?> actualizarAdministrador(
+            @PathVariable Integer id,
+            @RequestBody Administrador administrador) {
+
+        try {
+
+            Administrador administradorActualizado =
+                    administradorService.actualizar(
+                            id,
+                            administrador
+                    );
+
+            return ResponseEntity.ok(administradorActualizado);
+
+        } catch (IllegalArgumentException e) {
+
+            return ResponseEntity
+                    .badRequest()
+                    .body(e.getMessage());
+
+        } catch (RuntimeException e) {
+
+            return ResponseEntity
+                    .notFound()
+                    .build();
+        }
+    }
+
+
+    // DELETE - ELIMINAR ADMINISTRADOR
+    @DeleteMapping("/eliminar/{id}")
+    public ResponseEntity<String> eliminarAdministrador(
+            @PathVariable Integer id) {
+
+        try {
+
+            administradorService.eliminar(id);
+
+            return ResponseEntity.ok(
+                    "Administrador eliminado correctamente"
+            );
+
+        } catch (RuntimeException e) {
+
+            return ResponseEntity
+                    .notFound()
+                    .build();
         }
     }
 }

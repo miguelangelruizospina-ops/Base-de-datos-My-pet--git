@@ -6,13 +6,10 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-// @Repository le dice a Spring que gestione este archivo como el acceso a datos
-// JpaRepository<Administrador, Integer> le hereda todos los métodos básicos (findAll, save, deleteById)
 @Repository
-public interface AdministradorRepository extends JpaRepository<Administrador, Integer> {
-    
-    // Spring Boot lee el nombre del método y genera el SQL automáticamente:
-    // SELECT * FROM administrador WHERE id_usuario = ?
-    // El Optional sirve para manejar de forma segura si encuentra o no al administrador sin romper el sistema
+public interface AdministradorRepository
+        extends JpaRepository<Administrador, Integer> {
+
+    // Permite buscar un administrador usando el ID del usuario
     Optional<Administrador> findByUsuarioIdUsuario(Integer idUsuario);
 }

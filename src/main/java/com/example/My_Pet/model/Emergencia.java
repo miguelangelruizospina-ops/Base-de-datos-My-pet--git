@@ -3,43 +3,49 @@ package com.example.My_Pet.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-// @Entity le indica a Spring Boot que esta clase se mapeará como una tabla en la base de datos
 @Entity
-// @Table define el nombre exacto de la tabla física dentro de MySQL
 @Table(name = "emergencia")
 public class Emergencia {
 
-    // @Id define que este atributo es la Llave Primaria (Primary Key)
+    // ID de la emergencia
     @Id
-    // @GeneratedValue establece que el ID se creará de forma autoincrementable (AUTO_INCREMENT)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // @Column amarra el atributo al nombre real del campo en la base de datos
     @Column(name = "id_emergencia")
     private Integer idEmergencia;
 
-    // length restringe la longitud y nullable=false marca el campo como obligatorio (NOT NULL)
+    // Tipo de emergencia
     @Column(length = 150, nullable = false)
-    private String tipo; // Ej: "Mascota perdida", "Accidente", "Intoxicación"
+    private String tipo;
 
+    // Descripción de la emergencia
     @Column(length = 300, nullable = false)
-    private String descripcion; // Detalles clave sobre lo que está pasando
+    private String descripcion;
 
-    // updatable = false asegura que una vez registrada la emergencia, el tiempo original no se altere
+    // Fecha y hora de la emergencia
     @Column(name = "fecha", nullable = false, updatable = false)
     private LocalDateTime fecha;
 
-    // @ManyToOne indica que muchas emergencias pueden ser reportadas por un mismo Usuario
+    // Usuario relacionado con la emergencia
     @ManyToOne
-    // @JoinColumn crea la relación de llave foránea (Foreign Key) apuntando a la tabla usuario
-    @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario", nullable = false)
+    @JoinColumn(
+        name = "id_usuario",
+        referencedColumnName = "id_usuario",
+        nullable = false
+    )
     private Usuario usuario;
 
-    // Constructor vacío exigido por el motor de Hibernate para sus operaciones internas
+    // Constructor vacío
     public Emergencia() {
     }
 
-    // Constructor parametrizado para crear reportes de emergencia rápidamente en el sistema
-    public Emergencia(Integer idEmergencia, String tipo, String descripcion, LocalDateTime fecha, Usuario usuario) {
+    // Constructor completo
+    public Emergencia(
+            Integer idEmergencia,
+            String tipo,
+            String descripcion,
+            LocalDateTime fecha,
+            Usuario usuario) {
+
         this.idEmergencia = idEmergencia;
         this.tipo = tipo;
         this.descripcion = descripcion;
@@ -47,20 +53,45 @@ public class Emergencia {
         this.usuario = usuario;
     }
 
-    // --- MÉTODOS GETTERS Y SETTERS (Permiten la lectura y escritura segura de la información) ---
+    // Getters y setters
 
-    public Integer getIdEmergencia() { return idEmergencia; }
-    public void setIdEmergencia(Integer idEmergencia) { this.idEmergencia = idEmergencia; }
+    public Integer getIdEmergencia() {
+        return idEmergencia;
+    }
 
-    public String getTipo() { return tipo; }
-    public void setTipo(String tipo) { this.tipo = tipo; }
+    public void setIdEmergencia(Integer idEmergencia) {
+        this.idEmergencia = idEmergencia;
+    }
 
-    public String getDescripcion() { return descripcion; }
-    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+    public String getTipo() {
+        return tipo;
+    }
 
-    public LocalDateTime getFecha() { return fecha; }
-    public void setFecha(LocalDateTime fecha) { this.fecha = fecha; }
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
 
-    public Usuario getUsuario() { return usuario; }
-    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public LocalDateTime getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(LocalDateTime fecha) {
+        this.fecha = fecha;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
 }

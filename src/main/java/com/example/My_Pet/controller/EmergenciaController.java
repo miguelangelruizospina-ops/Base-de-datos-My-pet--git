@@ -1,52 +1,99 @@
-// Definición del paquete: organiza el proyecto y ubica esta clase en la capa de controladores (Endpoints de Emergencias)
 package com.example.My_Pet.controller;
 
-// Importaciones de la entidad del modelo, el componente de servicio y las clases de manejo de respuestas web
 import com.example.My_Pet.model.Emergencia;
 import com.example.My_Pet.service.EmergenciaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-// Utilidad para el manejo de colecciones de datos en Java
 import java.util.List;
 
-// @RestController: Indica que esta clase es un controlador REST que serializa automáticamente los objetos de retorno en formato JSON
+// Controlador de emergencias
 @RestController
-// @RequestMapping: Define la ruta base URL unificada para el mapeo de todas las peticiones HTTP orientadas a este módulo
 @RequestMapping("/api/emergencias")
 public class EmergenciaController {
 
-    // @Autowired: Inyección de dependencias para vincular la lógica operacional de la capa de servicio
+    // Conecta con el servicio
     @Autowired
     private EmergenciaService emergenciaService;
 
-    // @GetMapping: Mapea solicitudes de lectura HTTP GET. Ruta de acceso global: http://localhost:8082/api/emergencias/listar
+    // Lista todas las emergencias
     @GetMapping("/listar")
     public List<Emergencia> listarTodo() {
-        // Invoca el método del servicio para recuperar el historial completo de emergencias registradas
         return emergenciaService.obtenerTodas();
     }
 
-    // @GetMapping con parámetro dinámico: Permite filtrar e indexar el listado de emergencias asociadas a un usuario en específico
-    // URL de consulta en entorno local: http://localhost:8082/api/emergencias/usuario/{idUsuario}
+    // Lista las emergencias de un usuario
     @GetMapping("/usuario/{idUsuario}")
-    public List<Emergencia> listarPorUsuario(@PathVariable Integer idUsuario) {
-        // Filtra la búsqueda capturando la variable de ruta e invocando la lógica de negocio del servicio
+    public List<Emergencia> listarPorUsuario(
+            @PathVariable Integer idUsuario) {
+
         return emergenciaService.obtenerPorUsuario(idUsuario);
     }
 
-    // @PostMapping: Mapea solicitudes de inserción HTTP POST procesando datos estructurados adjuntos en el body
+    // Guarda una emergencia
     @PostMapping("/guardar")
-    public ResponseEntity<?> crearEmergencia(@RequestBody Emergencia emergencia) {
+    public ResponseEntity<?> crearEmergencia(
+            @RequestBody Emergencia emergencia) {
+
         try {
-            // Envía la entidad deserializada al servicio para procesar las reglas de negocio y ejecutar la persistencia en MySQL
-            Emergencia nuevaEmergencia = emergenciaService.guardar(emergencia);
-            // Retorna un código de estado HTTP 200 (OK) enviando la instancia del registro persistido
-            return ResponseEntity.ok(nuevaEmergencia); 
+
+            Emergencia nuevaEmergencia =
+                    emergenciaService.guardar(emergencia);
+
+            return ResponseEntity.ok(nuevaEmergencia);
+
         } catch (IllegalArgumentException e) {
-            // Manejo de excepciones: Atrapa las violaciones lógicas de la capa de servicio y responde un HTTP 400 (Bad Request) con el diagnóstico
-            return ResponseEntity.badRequest().body(e.getMessage());
+
+            return ResponseEntity
+                    .badRequest()
+                    .body(e.getMessage());
+        }
+    }
+
+    // Actualiza una emergencia
+    @PutMapping("/actualizar/{id}")
+    public ResponseEntity<?> actualizarEmergencia(
+            @PathVariable Integer id,
+            @RequestBody Emergencia emergencia) {
+
+        try {
+
+            emergencia.setIdEmergencia(id);
+
+            Emergencia emergenciaActualizada =
+                    emergenciaService.guardar(emergencia);
+
+            return ResponseEntity.ok(emergenciaActualizada);
+
+        } catch (IllegalArgumentException e) {
+
+            return ResponseEntity
+                    .badRequest()
+                    .body(e.getMessage());
+        }
+    }
+
+    // Elimina una emergencia
+    @DeleteMapping("/eliminar/{id}")
+    public ResponseEntity<?> eliminarEmergencia(
+            @PathVariable Integer id) {
+
+        try {
+
+            emergenciaService.eliminar(id);
+
+            return ResponseEntity.ok(
+                    "Emergencia eliminada correctamente."
+            );
+
+        } catch (Exception e) {
+
+            return ResponseEntity
+                    .badRequest()
+                    .body(
+                            "No fue posible eliminar la emergencia."
+                    );
         }
     }
 }

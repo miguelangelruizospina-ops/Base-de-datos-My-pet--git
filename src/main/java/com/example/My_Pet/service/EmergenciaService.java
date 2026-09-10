@@ -10,55 +10,70 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 
-// @Service encapsula la lógica de negocio y las reglas operacionales del sistema
 @Service
 public class EmergenciaService {
 
-    // @Autowired realiza la inyección de dependencias para conectar las capas de datos
+    // Repositorio de emergencias
     @Autowired
     private EmergenciaRepository emergenciaRepository;
 
+    // Repositorio de usuarios
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    // Recupera el listado completo de alertas de emergencias en la app
+    // Lista todas las emergencias
     public List<Emergencia> obtenerTodas() {
         return emergenciaRepository.findAll();
     }
 
-    // Recupera el historial de emergencias reportadas por un usuario específico
+    // Lista las emergencias de un usuario
     public List<Emergencia> obtenerPorUsuario(Integer idUsuario) {
         return emergenciaRepository.findByUsuarioIdUsuario(idUsuario);
     }
 
-    // Almacena o edita una alerta aplicando validaciones de integridad de datos
+    // Guarda o actualiza una emergencia
     public Emergencia guardar(Emergencia emergencia) {
-        
-        // CORRECCIÓN DE PRIMITIVO: Verificamos si el objeto usuario no fue enviado o si su ID numérico es inválido (<= 0)
-        if (emergencia.getUsuario() == null || emergencia.getUsuario().getIdUsuario() <= 0) {
-            throw new IllegalArgumentException("La emergencia debe estar reportada por un usuario válido.");
+
+        // Verifica que exista un usuario válido
+        if (emergencia.getUsuario() == null ||
+            emergencia.getUsuario().getIdUsuario() <= 0) {
+
+            throw new IllegalArgumentException(
+                "La emergencia debe estar reportada por un usuario válido."
+            );
         }
 
         Integer idUsuario = emergencia.getUsuario().getIdUsuario();
-        
-        // Valida si el usuario reportante existe realmente en los registros de MySQL
-        Usuario usuarioExistente = usuarioRepository.findById(idUsuario)
-                .orElseThrow(() -> new IllegalArgumentException("El usuario con ID " + idUsuario + " no existe."));
 
-        // Se asigna la entidad de usuario verificada al reporte
+        // Verifica que el usuario exista
+        Usuario usuarioExistente = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new IllegalArgumentException(
+                    "El usuario con ID " + idUsuario + " no existe."
+                ));
+
+        // Asigna el usuario encontrado
         emergencia.setUsuario(usuarioExistente);
 
-        // Si es una alerta nueva, capturamos el tiempo exacto del sistema antes de impactar la BD
+       
         if (emergencia.getIdEmergencia() == null) {
             emergencia.setFecha(LocalDateTime.now());
         }
 
-        // Guarda el registro y nos devuelve el objeto persistido con su ID final
+        // Guarda la emergencia
         return emergenciaRepository.save(emergencia);
     }
 
-    // Borra una alerta médica o de emergencia mediante su ID principal
+    // Elimina una emergencia por su ID
     public void eliminar(Integer id) {
+
+        // Verifica que la emergencia exista
+        if (!emergenciaRepository.existsById(id)) {
+            throw new IllegalArgumentException(
+                "La emergencia con ID " + id + " no existe."
+            );
+        }
+
+        
         emergenciaRepository.deleteById(id);
     }
 }
